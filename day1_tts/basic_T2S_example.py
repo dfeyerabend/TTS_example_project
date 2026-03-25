@@ -34,16 +34,3 @@ speech = model.generate_speech(       # führt die komplette Generierung aus
 
 sf.write("output.wav", speech.numpy(), samplerate=16000)                                        # schreibt den Audio-Tensor als WAV-Datei, 16kHz Samplerate
 print(f"Audio gespeichert: output.wav {len(speech)} samples, {len(speech)/16000:.1f} Sekunden")     # zeigt Länge in Samples und Sekunden
-
-
-
-#embeddings_dataset = embeddings_dataset.map()
-
-# Maennliche Stimme:
-#speaker_embeddings = torch.tensor(embeddings_dataset[7306]["xvector"]).unsqueeze(0)
-
-# Weibliche Stimme:
-#speaker_embeddings = torch.tensor(embeddings_dataset[0]["xvector"]).unsqueeze(0)
-
-# Noch eine andere:
-#speaker_embeddings = torch.tensor(embeddings_dataset[3000]["xvector"]).unsqueeze(0)

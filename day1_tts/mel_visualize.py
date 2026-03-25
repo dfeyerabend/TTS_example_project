@@ -7,7 +7,7 @@ import librosa.display
 # ─── Schritt 1: Audio laden ──────────────────────
 
 # Benutzt eine eurer generierten Dateien:
-audio, sr = librosa.load("speaker_embedding_results/speaker_5000.wav", sr=16000)
+audio, sr = librosa.load("results/speaker_embedding_results/speaker_5000.wav", sr=16000)
 
 # ─── Schritt 2: Mel-Spectrogram berechnen ────────
 mel_spec = librosa.feature.melspectrogram(

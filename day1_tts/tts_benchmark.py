@@ -10,15 +10,20 @@ test_text = "Machine Learning ist ein Teilgebiet der kuenstlichen Intelligenz. N
 
 results = []
 
+# Ensure output directory exists
+out_dir = Path("results/tts_benchmark_results")
+out_dir.mkdir(parents=True, exist_ok=True)
+
 # ─── OpenAI TTS ───────────────────────────────────
 from openai import OpenAI
 client = OpenAI()
 
 start = time.time()
 response = client.audio.speech.create(model="tts-1", voice="nova", input=test_text)
-response.with_streaming_response.method("bench_openai.mp3")
+openai_path = out_dir / "bench_openai.mp3"
+response.write_to_file(openai_path)
 t_openai = time.time() - start
-size_openai = os.path.getsize("tts_benchmark_results/bench_openai.mp3")
+size_openai = os.path.getsize(openai_path)
 cost_openai = len(test_text) * 0.015 / 1000
 results.append(("OpenAI tts-1", t_openai, size_openai, cost_openai, "Closed Source", "Unbekannt"))
 
@@ -36,9 +41,10 @@ spk = torch.tensor(emb_ds[7306]["xvector"]).unsqueeze(0)
 start = time.time()
 inp = proc(text=test_text, return_tensors="pt")
 speech = mdl.generate_speech(inp["input_ids"], spk, vocoder=voc)
-sf.write("bench_speecht5.wav", speech.numpy(), samplerate=16000)
+speecht5_path = out_dir / "bench_speecht5.wav"
+sf.write(speecht5_path, speech.numpy(), samplerate=16000)
 t_speecht5 = time.time() - start
-size_speecht5 = os.path.getsize("tts_benchmark_results/bench_speecht5.wav")
+size_speecht5 = os.path.getsize(speecht5_path)
 results.append(("SpeechT5", t_speecht5, size_speecht5, 0.0, "Encoder-Decoder", "JA"))
 
 # ─── Bark ─────────────────────────────────────────
@@ -51,9 +57,10 @@ bmdl = BarkModel.from_pretrained("suno/bark-small")
 start = time.time()
 binp = bproc(test_text, voice_preset="v2/de_speaker_3")
 baudio = bmdl.generate(**binp).cpu().numpy().squeeze()
-scipy.io.wavfile.write("bench_bark.wav", rate=24000, data=baudio)
+bark_path = out_dir / "bench_bark.wav"
+scipy.io.wavfile.write(bark_path, rate=24000, data=baudio)
 t_bark = time.time() - start
-size_bark = os.path.getsize("tts_benchmark_results/bench_bark.wav")
+size_bark = os.path.getsize(bark_path)
 results.append(("Bark", t_bark, size_bark, 0.0, "3x Decoder-Only", "NEIN"))
 
 # ─── Ergebnisse ───────────────────────────────────
