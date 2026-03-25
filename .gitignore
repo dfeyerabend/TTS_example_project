@@ -41,3 +41,13 @@ wandb/
 .env
 .env.*
 
+# =========================
+# Audio Files
+# =========================
+
+day2_voice_agent/recordings/*
+day2_voice_agent/outputs/*
+
+# Keep folders
+!day2_voice_agent/recordings/.gitkeep
+!day2_voice_agent/outputs/.gitkeep
